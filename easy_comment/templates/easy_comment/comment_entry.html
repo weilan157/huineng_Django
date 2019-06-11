@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<div class="pinglun-entry" id="c{{ comment.id }}" style="border-bottom: 1px solid #EAEAEA;margin-top: 30px;">
+    <div class="pinglun-avatar" style="color: #5bc0de;font-weight:900;font-size:x-large;margin-top:15px;">
+        <img width="45" height="45" style="border-radius: 50%;align-items: center;justify-content: center;overflow: hidden;" src="{{ comment.user.avatar.url }}">
+        {{ comment.user.username }}
+        <span class="pull-right">
+        {{ comment.submit_date|timesince }}
+        </span>
+        <span style="color: #777777;font-size: small;font-weight: 100;">{{ comment.created }}</span>
+    </div>
+    <div class="pinglun-body" style="margin-left: 55px;">
+        {% if comment.parent %}
+        <div class="parent-pinglun">
+            <blockquote>
+                <em style="color: #40a2c1"><i class="fa fa-at"></i>{{ comment.parent.user.username }}</em><br>
+                <div>{{ comment.parent.content|safe }}</div>
+            </blockquote>
+        </div>
+        {% endif %}
+        <div class="pinglun-text">{{ comment.content|safe }}</div>
+    </div>
+    <div class="clear"></div>
+    <div class="pinglun-bottom" style="margin-bottom: 20px;">
+        <a class="reply" id="{{ comment.id }}" href="#评论" data-name="{{ comment.user.username }}">
+            <span class="pull-right">回复</span>
+        </a>
+        <div class="clear"></div>
+    </div>
+</div>

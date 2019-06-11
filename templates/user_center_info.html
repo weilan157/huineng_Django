@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    {% load staticfiles %}
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>天天生鲜-用户中心</title>
+	<link rel="stylesheet" type="text/css" href="../static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+
+    <link rel="stylesheet" href="{% static 'avatar/css/cropper.min.css' %}">
+    <link rel="stylesheet" href="{% static 'avatar/css/ImgCropping.css' %}">
+</head>
+<body>
+	<div class="header_con">
+		<div class="header">
+			<div class="welcome fl">欢迎来到天天生鲜!</div>
+			<div class="fr">
+                {% if user.is_authenticated %}
+				<div class="login_btn fl">
+					欢迎您：<em>{{ user.username }}</em>
+                    <span>|</span>
+					<a href="{% url "account_logout" %}">退出</a>
+				</div>
+                {% else %}
+				<div class="login_btn fl">
+					<a href="{% url "account_login" %}">登录</a>
+					<span>|</span>
+					<a href="{% url "account_signup" %}">注册</a>
+				</div>
+                {% endif %}
+				<div class="user_link fl">
+					<span>|</span>
+					<a href="{% url 'user:info' %}">用户中心</a>
+					<span>|</span>
+					<a href="cart.html">我的购物车</a>
+					<span>|</span>
+					<a href="{% url 'user:order' %}">我的订单</a>
+				</div>
+			</div>
+		</div>		
+	</div>
+
+	<div class="search_bar clearfix">
+		<a href="index.html" class="logo fl"><img src="{% static 'index/images/201610171329086541.png' %}"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+		<div class="search_con fr">
+			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
+			<input type="button" class="input_btn fr" name="" value="搜索">
+		</div>		
+	</div>
+
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+				<li><a href="{% url 'user:info' %}" class="active">· 个人信息</a></li>
+				<li><a href="{% url 'user:order' %}">· 发布订单</a></li>
+				<li><a href="{% url 'user:pick' %}">· 领取订单</a></li>
+			</ul>
+		</div>
+        <button id="replaceImg" class="l-btn" style="left:-9999px;position:absolute;">更换图片</button>
+		<div class="right_content clearfix">
+				<div class="info_con clearfix">
+				<h3 class="common_title2">基本信息</h3>
+						<ul class="user_info_list">
+                            <li><span>头像：</span>
+                                <img id="finalImg" title="点击更换" onclick="copyText()" src="{{ MEDIA_URL }}{{ user.avatar }}" width="80" height="80" style="display: flex;border-radius: 50%;align-items: center;justify-content: center;overflow: hidden;">
+                            </li>
+                            <li><span></span></li>
+                            <!--图片裁剪框 start-->
+                            <div style="display: none" class="tailoring-container">
+                                <div class="black-cloth" onclick="closeTailor(this)"></div>
+                                    <div class="tailoring-content">
+                                        <div class="tailoring-content-one">
+                                            <label title="上传图片" for="chooseImg" class="l-btn choose-btn">
+                                                <form onsubmit="return dosubmit()" method="post" enctype="multipart/form-data" id="nameform">
+                                                {% csrf_token %}
+                                                <input type="file" accept="image/jpg,image/jpeg,image/png" name="avatar" id="chooseImg" class="hidden" onchange="selectImg(this)">
+                                                选择图片
+                                                </form>
+                                            </label>
+                                            <div class="close-tailoring"  onclick="closeTailor(this)">×</div>
+                                        </div>
+                                        <div class="tailoring-content-two">
+                                            <div class="tailoring-box-parcel">
+                                                <img id="tailoringImg">
+                                            </div>
+                                            <div class="preview-box-parcel">
+                                                <p>图片预览：</p>
+{#                                                <div class="square previewImg"></div><!--方形预览框-->#}
+                                                <div class="circular previewImg"></div>
+                                            </div>
+                                        </div>
+                                        <div class="tailoring-content-three">
+                                            <button class="l-btn cropper-reset-btn">复位</button>
+                                            <button class="l-btn cropper-rotate-btn">旋转</button>
+                                            <button class="l-btn cropper-scaleX-btn">换向</button>
+                                            <button class="l-btn sureCut" id="sureCut" form="nameform">确定</button>
+                                        </div>
+                                    </div>
+                            </div>
+                            <!--图片裁剪框 end-->
+                            <li><span>用户名：</span>{{ user.username }}</li>
+							<li><span>联系方式：</span>18210569700</li>
+                            <li><span>电子邮箱：</span><a href="{% url 'account_email' %}" title="点击更换">{{ user.email }}</a></li>
+						</ul>
+                </div>
+				<h3 class="common_title2">最近浏览</h3>
+		</div>
+	</div>
+{#                                <button type="submit" value="Submit">提交</button>#}
+
+	<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2016 北京天天生鲜信息技术有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+<script src="{% static 'avatar/js/jquery-2.1.1.js' %}"></script>
+<script src="{% static 'avatar/js/cropper.min.js' %}"></script>
+<script>
+
+    //弹出框水平垂直居中
+    (window.onresize = function () {
+        var win_height = $(window).height();
+        var win_width = $(window).width();
+        if (win_width <= 768){
+            $(".tailoring-content").css({
+                "top": (win_height - $(".tailoring-content").outerHeight())/2,
+                "left": 0
+            });
+        }else{
+            $(".tailoring-content").css({
+                "top": (win_height - $(".tailoring-content").outerHeight())/2,
+                "left": (win_width - $(".tailoring-content").outerWidth())/2
+            });
+        }
+    })();
+
+    //弹出图片裁剪框
+    $("#replaceImg").on("click",function () {
+        $(".tailoring-container").toggle();
+    });
+    //图像上传
+    function selectImg(file) {
+        if (!file.files || !file.files[0]){
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            var replaceSrc = evt.target.result;
+            //更换cropper的图片
+            $('#tailoringImg').cropper('replace', replaceSrc,false);//默认false，适应高度，不失真
+        }
+        reader.readAsDataURL(file.files[0]);
+    }
+    //cropper图片裁剪
+    $('#tailoringImg').cropper({
+        aspectRatio: 1,//默认比例
+        preview: '.previewImg',//预览视图
+        guides: true,  //裁剪框的虚线(九宫格)
+        autoCropArea: 0.5,  //0-1之间的数值，定义自动剪裁区域的大小，默认0.8
+        movable: true, //是否允许移动图片
+        dragCrop: true,  //是否允许移除当前的剪裁框，并通过拖动来新建一个剪裁框区域
+        movable: true,  //是否允许移动剪裁框
+        resizable: true,  //是否允许改变裁剪框的大小
+        zoomable: true,  //是否允许缩放图片大小
+        mouseWheelZoom: true,  //是否允许通过鼠标滚轮来缩放图片
+        touchDragZoom: true,  //是否允许通过触摸移动来缩放图片
+        rotatable: true,  //是否允许旋转图片
+        crop: function(e) {
+            // 输出结果数据裁剪图像。
+        }
+    });
+    //旋转
+    $(".cropper-rotate-btn").on("click",function () {
+        $('#tailoringImg').cropper("rotate", 15);
+    });
+    //复位
+    $(".cropper-reset-btn").on("click",function () {
+        $('#tailoringImg').cropper("reset");
+    });
+    //换向
+    var flagX = true;
+    $(".cropper-scaleX-btn").on("click",function () {
+        if(flagX){
+            $('#tailoringImg').cropper("scaleX", -1);
+            flagX = false;
+        }else{
+            $('#tailoringImg').cropper("scaleX", 1);
+            flagX = true;
+        }
+        flagX != flagX;
+    });
+
+    //裁剪后的处理
+    $("#sureCut").on("click",function () {
+        if ($("#tailoringImg").attr("src") == null ){
+            return false;
+        }else{
+            var cas = $('#tailoringImg').cropper('getCroppedCanvas');//获取被裁剪后的canvas
+            var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+            $("#finalImg").prop("src",base64url);//显示为图片的形式
+
+            //关闭裁剪框
+            closeTailor();
+        }
+    });
+    //关闭裁剪框
+    function closeTailor() {
+        $(".tailoring-container").toggle();
+    }
+
+    {#点击头像触发更换函数#}
+    function copyText()
+    {
+    document.getElementById("replaceImg").click();
+    }
+
+    let isCommitted = false;//表单是否已经提交标识，默认为false
+    function dosubmit(){
+        if(isCommitted==false){
+                 isCommitted = true;//提交表单后，将表单是否已经提交标识设置为true
+                 return true;//返回true让表单正常提交
+             }else{
+                 return false;//返回false那么表单将不提交
+             }
+         }
+</script>
+
+</body>
+</html>

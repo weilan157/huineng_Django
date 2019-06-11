@@ -1,0 +1,54 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<form class="login" method="POST" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+    {% endif %}
+    <a class="secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+    <a class="secondaryAction" href="{% url 'account_signup' %}">{% trans "注册" %}</a>
+    <button class="pull-right btn btn-info btn-sm rounded-0" type="submit">{% trans "Sign In" %}</button>
+                <div class="text-center mb-5" id="social-login">
+                    <div class="login-title">
+{#                        <span>快速登录</span>#}
+                    </div>
+                    <div class="login-link">
+                        <a class="mx-4" href="/accounts/weibo/login/?next={{ next_url }}" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-weibo fa-2x"></i></a>
+                        <a class="mx-4" href="/accounts/github/login/?next={{ next_url }}" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-github fa-2x"></i></a>
+{#                      <a class="mx-4" href="/accounts/weixin/login/?next={{ next_url }}" title="社交账号登录有点慢，请耐心等候！"><i class="fa fa-weixin fa-2x"></i></a>#}
+                        <a class="mx-4" href="/accounts/baidu/login/?next={{ next_url }}" title="社交账号登录有点慢，请耐心等候！"><i class="fa  fa-2x"><img src="/static/baidu.png " alt=""></i></a>
+                        {#                            {% load socialaccount %}#}
+{##}
+{#                            {% get_providers as socialaccount_providers %}#}
+ {##}
+{#                            {% for provider in socialaccount_providers %}#}
+{#                            {% if provider.id == "openid" %}#}
+{#                            {% for brand in provider.get_brands %}#}
+{#                            <li>#}
+{#                              <a title="{{brand.name}}"#}
+{#                                 class="socialaccount_provider {{provider.id}} {{brand.id}}"#}
+{#                                 href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"#}
+{#                                 >{{brand.name}}</a>#}
+{#                            </li>#}
+{#                            {% endfor %}#}
+{#                            {% endif %}#}
+{#                            <li>#}
+{#                              <a title="{{provider.name}}"#}
+{#                                 class="socialaccount_provider {{provider.id}}"#}
+{#                                 href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"#}
+{#                                 >{{provider.name}}</a>#}
+{#                            </li>#}
+{#                            {% endfor %}#}
+                    </div>
+                </div>
+
+</form>
+{% endblock %}

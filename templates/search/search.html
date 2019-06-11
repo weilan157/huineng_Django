@@ -1,0 +1,301 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    {% load staticfiles %}#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{##}
+{#<link rel="stylesheet" type="text/css" href="{% static 'index/css/bootstrap.min.css' %}">#}
+{#<link rel="stylesheet" type="text/css" href="{% static 'index/css/nprogress.css' %}">#}
+{#<link rel="stylesheet" type="text/css" href="{% static 'index/css/style.css' %}">#}
+{#<link rel="stylesheet" type="text/css" href="{% static 'index/css/font-awesome.min.css' %}">#}
+{#<link rel="apple-touch-icon-precomposed" href="{% static 'index/images/icon.png' %}">#}
+{#<link rel="shortcut icon" href="{% static 'index/images/favicon.ico' %}">#}
+{#<script src="{% static 'index/js/jquery-2.1.4.min.js' %}"></script>#}
+{#<script src="{% static 'index/js/nprogress.js' %}"></script>#}
+{#<script src="{% static 'index/js/jquery.lazyload.min.js' %}"></script>#}
+{#</head>#}
+{#<body>#}
+{#<h2>Search</h2>#}
+{##}
+{#    <form method="get" action=".">#}
+{#    {% csrf_token %}#}
+{#        <table>#}
+{#            {{ form.as_table }}#}
+{#            <tr>#}
+{#                <td> </td>#}
+{#                <td>#}
+{#                    <input type="submit" value="Search">#}
+{#                </td>#}
+{#            </tr>#}
+{#        </table>#}
+{##}
+{#        {% if query %}#}
+{#            <h3>Results</h3>#}
+{##}
+{#            {% for result in page.object_list %}#}
+{#                <p>#}
+{#                    <a href="{% url 'index:show'  result.object.id %}">{{ result.object.describe}}</a>#}
+{#                    <article class="excerpt excerpt-1"  href="{% url 'index:show'  result.object.id %}" >#}
+{#                    <a class="focus" href="{% url 'index:show'  result.object.id %}" title="任务详情" target="_blank" ><img class="thumb" data-original="{{ MEDIA_URL }}{{ result.object.image}}" src="{{ MEDIA_URL }}{{ result.object.image}}" alt="用DTcms做一个独立博客网站（响应式模板）"  style="display: inline;"></a>#}
+{#	                <header><a class="cat" title="MZ-NetBlog主题" >任务标题<i></i></a>/#}
+{#	                <h2><a href="{% url 'index:show'  result.object.id %}" title="任务详情" target="_blank" >{{ result.object.title}}</a></h2>#}
+{#                    </header>#}
+{#                    <p class="meta">#}
+{#                    <time class="time"><i class="glyphicon glyphicon-time"></i> {{ result.object.to_time}}</time>#}
+{#                    <span class="views"><i class="glyphicon glyphicon-eye-open"></i> {{ line.price }}元</span> <a class="comment" href="##comment" title="评论" target="_blank" ><i class="glyphicon glyphicon-comment"></i> 4</a></p>#}
+{#                    <a  href="{% url 'index:show'  result.object.id %}" ><p class="note">{{ result.object.describe|striptags}}</p></a>#}
+{#                    </article>#}
+{#                </p>#}
+{#            {% empty %}#}
+{#                <p>No results found.</p>#}
+{#            {% endfor %}#}
+{##}
+{#            {% if page.has_previous or page.has_next %}#}
+{#                <div>#}
+{#                    {% if page.has_previous %}<a href="?q={{ query }}&page={{ page.previous_page_number }}">{% endif %}« Previous{% if page.has_previous %}</a>{% endif %}#}
+{#                    |#}
+{#                    {% if page.has_next %}<a href="?q={{ query }}&page={{ page.next_page_number }}">{% endif %}Next »{% if page.has_next %}</a>{% endif %}#}
+{#                </div>#}
+{#            {% endif %}#}
+{#        {% else %}#}
+            {# Show some example queries to run, maybe query syntax, something else? #}
+{#        {% endif %}#}
+{#    </form>#}
+{##}
+{#</body>#}
+{#</html>#}
+
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        {% load staticfiles %}
+        {% load highlight %}
+        <meta charset="utf-8">
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>搜索</title>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/nprogress.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/font-awesome.min.css' %}">
+        <link rel="apple-touch-icon-precomposed" href="{% static 'index/images/icon.png' %}">
+        <link rel="shortcut icon" href="{% static 'index/images/favicon.ico' %}">
+        <script src="{% static 'index/js/jquery-2.1.4.min.js' %}"></script>
+        <script src="{% static 'index/js/nprogress.js' %}"></script>
+        <script src="{% static 'index/js/jquery.lazyload.min.js' %}"></script>
+        <!--[if gte IE 9]>
+  <script src="{% static 'index/js/jquery-1.11.1.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'index/js/html5shiv.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'index/js/respond.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'index/js/selectivizr-min.js' %}" type="text/javascript"></script>
+<![endif]-->
+<!--[if lt IE 9]>
+  <script>window.location.href='upgrade-browser.html';</script>
+<![endif]-->
+        <style>
+            span.highlighted { color: #ff8532; }
+        </style>
+    </head>
+    <body class="user-select">
+        <header class="header">
+            <nav class="navbar navbar-default" id="navbar">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-navbar" aria-expanded="false"> <span class="sr-only"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+                        <h1 class="logo hvr-bounce-in"><a href="#" title="会能社区"><img src="{% static 'index/images/201610171329086541.png' %}" alt="会能社区"></a></h1>
+                    </div>
+                    <div class="collapse navbar-collapse" id="header-navbar">
+{#                        <form class="navbar-form" action="{% url "haystack_search" %}" method="get">#}
+{#	                        <div class="input-group">#}
+{#                                <label>#}
+{#                                     {% csrf_token %}#}
+{#                                    <input type="text" name="q" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">#}
+{#                                </label>#}
+{#                                <span class="input-group-btn">#}
+{#	                    	        <button class="btn btn-default btn-search" name="search" type="submit">搜索</button>#}
+{#	                    	    </span>#}
+{#                            </div>#}
+{#	                    </form>#}
+	                    <ul class="nav navbar-nav navbar-right">
+	                        <li><a data-cont="会能社区" title="会能社区" href="index.html">首页</a></li>
+	                        <li><a data-cont="列表页" title="列表页" href="list.html">列表页</a></li>
+	                        <li><a data-cont="详细页" title="详细页" href="show.html">详细页</a></li>
+{#	                        <li><a data-cont="404" title="404" href="404.html">404</a></li>#}
+	                        <li><a data-cont="更换主题" title="更换主题" href="#" >更换主题</a></li>
+	                        <li><a data-cont="公益活动" title="公益活动" href="#" >公益活动</a></li>
+	                        <li><a data-cont="休闲" title="休闲" href="#" >休闲</a></li>
+	                        <li><a data-cont="娱乐" title="娱乐" href="#" >娱乐</a></li>
+	                        <li><a data-cont="工作" title="工作" href="#" >工作</a></li>
+	                    </ul>
+                        <ul class="nav navbar-nav navbar-right" style="float: right;">
+                            {% if request.user.is_authenticated %}
+	                        <li><a href="{% url 'user:info' %}" >欢迎您：<em>{{ request.user.username }}</em></a></li>
+                            <li><a href="{% url "account_logout" %}">退出</a></li>
+                            {% else %}
+		                    <li><a href="{% url "account_login" %}">登录</a></li>
+                            <li><a href="{% url "account_signup" %}">注册</a></li>
+                        {% endif %}
+	                    </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <section class="container">
+            <div class="content-wrap">
+                <div class="content">
+                    <div class="title">
+                        <h3 style="line-height: 1.3">MZ-NetBlog主题</h3>
+                    </div>
+                    {% if query %}
+{#                    <h3>Results</h3>#}
+                    {% for result in page.object_list %}
+{#                    <a href="{% url 'index:show'  result.object.id %}">{{ result.object.describe}}</a>#}
+                        <article class="excerpt excerpt-1"  href="{% url "index:show"  result.object.id%}" >
+                            <a class="focus" href="{% url "index:show" result.object.id%}" title="任务详情" target="_blank" ><img class="thumb" data-original="{{ MEDIA_URL }}{{ result.object.image }}" src="{{ MEDIA_URL }}{{ result.object.image }}" alt="用DTcms做一个独立博客网站（响应式模板）"  style="display: inline;"></a>
+	                        <header>
+                                <a class="cat" title="MZ-NetBlog主题" >任务标题<i></i></a>/
+	                            <h2>
+                                    <a href="{% url "index:show" result.object.id%}" title="任务详情" target="_blank" >{% highlight result.object.title with query %}</a>
+                                </h2>
+	                        </header>
+	                        <p class="meta">
+	                            <time class="time">
+                                    <i class="glyphicon glyphicon-time"></i> {{ result.object.to_time }}</time>
+	                            <span class="views">
+                                    <i class="glyphicon glyphicon-eye-open"></i> {{ result.object.price }}元</span> <a class="comment" href="##comment" title="评论" target="_blank" ><i class="glyphicon glyphicon-comment"></i> 4</a>
+                            </p>
+	                        <a  href="{% url "index:show" result.object.id%}" >
+                                <p class="note">{% highlight result.object.describe with query %}</p>
+                            </a>
+                        </article>
+                    {% empty %}
+                    <p>抱歉，没有找到你想要的内容</p>
+                    {% endfor %}
+
+                    {% if page.has_previous or page.has_next %}
+                        <div>
+                            {% if page.has_previous %}<a href="?q={{ query }}&page={{ page.previous_page_number }}">{% endif %}« Previous{% if page.has_previous %}</a>{% endif %}
+                            |
+                            {% if page.has_next %}<a href="?q={{ query }}&page={{ page.next_page_number }}">{% endif %}Next »{% if page.has_next %}</a>{% endif %}
+                        </div>
+                    {% endif %}
+                    {% else %}
+                    {# 显示一些要运行的查询示例，可能是查询语法，或者其他什么？#}
+                    {% endif %}
+                </div>
+            </div>
+            <aside class="sidebar">
+                <div class="fixed">
+                    <div class="widget widget_search">
+                        <form class="navbar-form" action="{% url "haystack_search" %}" method="get">
+                            {% csrf_token %}
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default btn-search" name="search" type="submit">搜索</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="widget widget_sentence">
+                        <h3>标签云</h3>
+                        <div class="widget-sentence-content">
+                            <ul class="plinks ptags">
+                                <li>
+                                    <a href="#list/67/" title="移动统计" draggable="false">
+                                        移动统计 <span class="badge">1</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/256/" title="404" draggable="false">
+                                        404 <span class="badge">1</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/252/" title="VS2010" draggable="false">
+                                        VS2010 <span class="badge">1</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/162/" title="杀毒软件" draggable="false">
+                                        杀毒软件 <span class="badge">1</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/133/" title="html标签" draggable="false">
+                                        html标签 <span class="badge">1</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/49/" title="循环" draggable="false">
+                                        循环 <span class="badge">2</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/22/" title="百度统计" draggable="false">
+                                        百度统计 <span class="badge">2</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#list/132/" title="sql" draggable="false">
+                                        sql <span class="badge">6</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget widget_hot">
+                    <h3>最新评论文章</h3>
+                    <ul>
+                        <li>
+                            <a title="用DTcms做一个独立博客网站（响应式模板）" href="#">
+                                <span class="thumbnail">
+                                    <img class="thumb" data-original="images/201610181739277776.jpg" src="images/201610181739277776.jpg" alt="用DTcms做一个独立博客网站（响应式模板）" style="display: block;">
+                                </span>
+                                <span class="text">用DTcms做一个独立博客网站（响应式模板）</span>
+                                <span class="muted">
+                                    <i class="glyphicon glyphicon-time"></i>
+                                    2016-11-01
+
+                                </span>
+                                <span class="muted">
+                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                    88
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="widget widget_sentence">
+                    <a href="#" target="_blank" rel="nofollow" title="MZ-NetBlog主题">
+                        <img style="width: 100%" src="images/ad.jpg" alt="MZ-NetBlog主题">
+                    </a>
+                </div>
+                <div class="widget widget_sentence">
+                    <a href="#" target="_blank" rel="nofollow" title="专业网站建设">
+                        <img style="width: 100%" src="images/201610241224221511.jpg" alt="专业网站建设">
+                    </a>
+                </div>
+            </aside>
+        </section>
+        <footer class="footer">
+            <div class="container">
+                <p>
+                    Copyright &copy;2016.Company name All rights reserved.More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a>
+                    - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a>
+                </p>
+            </div>
+            <div id="gotop">
+                <a class="gotop"></a>
+            </div>
+        </footer>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.ias.js"></script>
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

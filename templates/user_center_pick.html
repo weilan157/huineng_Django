@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    {% load staticfiles %}
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>天天生鲜-用户中心</title>
+	<link rel="stylesheet" type="text/css" href="../static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+<script>
+    function countDown( maxtime,fn )  {
+        var timer = setInterval(function() {
+               if( !!maxtime ){
+                   var day = Math.floor(maxtime / 86400),
+                   hour = Math.floor((maxtime % 86400) / 3600),
+                minutes = Math.floor((maxtime % 3600) / 60),
+                seconds = Math.floor(maxtime%60),
+                msg = "距离截止"+day+"天"+hour+"时"+minutes+"分"+seconds+"秒";
+                fn( msg );
+                --maxtime;
+            } else {
+                clearInterval( timer );
+                fn("时间到，结束!");
+            }
+        }, 1000);
+    }
+    {% for line in tasks %} {
+        (function () {
+            //获取当前时间
+            var date = new Date();
+            var now = date.getTime();
+            //设置截止时间
+            var str="{{ line.to_time|date:"Y-m-d H:i:s" }}";
+            var endDate = new Date(str);
+            var end = endDate.getTime();
+
+            //时间差
+            var leftTime = (end-now)/1000;
+            var obj = 'timer' + {{ forloop.counter0 }};
+            countDown( leftTime,function( msg ) {
+                document.getElementById(obj).innerHTML = msg;
+            })
+        })({{ forloop.counter0 }})
+    }
+    {% endfor %}
+
+</script>
+</head>
+<body>
+	<div class="header_con">
+		<div class="header">
+			<div class="welcome fl">欢迎来到天天生鲜!</div>
+			<div class="fr">
+                {% if user.is_authenticated %}
+				<div class="login_btn fl">
+					欢迎您：<em>{{ user.username }}</em>
+                    <span>|</span>
+					<a href="{% url "account_logout" %}">退出</a>
+				</div>
+                {% else %}
+				<div class="login_btn fl">
+					<a href="{% url "account_login" %}">登录</a>
+					<span>|</span>
+					<a href="{% url "account_signup" %}">注册</a>
+				</div>
+                {% endif %}
+				<div class="user_link fl">
+					<span>|</span>
+					<a href="{% url 'user:info' %}">用户中心</a>
+					<span>|</span>
+					<a href="cart.html">我的购物车</a>
+					<span>|</span>
+					<a href="{% url 'user:order' %}">我的订单</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="search_bar clearfix">
+		<a href="index.html" class="logo fl"><img src="{% static 'index/images/201610171329086541.png' %}"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+		<div class="search_con fr">
+			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
+			<input type="button" class="input_btn fr" name="" value="搜索">
+		</div>
+	</div>
+
+    <div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+				<li><a href="{% url 'user:info' %}">· 个人信息</a></li>
+				<li><a href="{% url 'user:order' %}">· 发布订单</a></li>
+				<li><a href="{% url 'user:pick' %}" class="active">· 领取订单</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<h3 class="common_title2">发布订单</h3>
+                {% for line in tasks %}
+				<ul class="order_list_th w978 clearfix">
+					<li class="col01">{{ line.create_time }}</li>
+{#                    <li class="col02">截至时间：<span id="timer{{ forloop.counter0 }}">{{ line.to_time|date:"Y-m-d H:i:s" }}</span></li>#}
+                    <li class="col02"><span id="timer{{ forloop.counter0 }}"></span></li>
+                    <li class="col02 stress">{{ line.is_receive }}</li>
+				</ul>
+				<table class="order_list_table w980">
+					<tbody>
+						<tr>
+							<td width="70%">
+								<ul class="order_goods_list clearfix">
+									<li class="col01"><img src="{{ MEDIA_URL }}{{ line.image }}"></li>
+									<li class="col02"><a href="#">{{ line.title }}</a></li>
+								</ul>
+							</td>
+							<td width="15%">&yen;{{ line.price }}元</td>
+							<td width="15%">发布用户：<a href="#">{{ line.owner }}</a></td>
+						</tr>
+					</tbody>
+				</table>
+                {% endfor %}
+
+				<div class="pagenation">
+					<a href="#"><上一页</a>
+					<a href="#" class="active">1</a>
+					<a href="#">2</a>
+					<a href="#">3</a>
+					<a href="#">4</a>
+					<a href="#">5</a>
+					<a href="#">下一页></a>
+				</div>
+		</div>
+	</div>
+
+
+
+	<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>
+		</div>
+		<p>CopyRight © 2016 北京天天生鲜信息技术有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+</body>
+</html>
+

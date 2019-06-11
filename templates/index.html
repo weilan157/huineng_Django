@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        {% load staticfiles %}
+        <meta charset="utf-8">
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>会能社区</title>
+        <meta name="keywords" content="">
+        <meta name="description" content="">
+        {#  轮播图相关  #}
+        <link rel="stylesheet" type="text/css" href="{% static 'index_image/css/index.css' %}"/>
+
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/nprogress.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'index/css/font-awesome.min.css' %}">
+        <link rel="apple-touch-icon-precomposed" href="{% static 'index/images/icon.png' %}">
+        <link rel="shortcut icon" href="{% static 'index/images/favicon.ico' %}">
+        {% csrf_token %}
+        <script src="{% static 'index/js/jquery-2.1.4.min.js' %}"></script>
+        <script src="{% static 'index/js/nprogress.js' %}"></script>
+        <script src="{% static 'index/js/jquery.lazyload.min.js' %}"></script>
+
+        {# 聊天室样式 #}
+        <link rel="stylesheet" href="{% static "chat/css/amazeui.min.css" %}" />
+        <link rel="stylesheet" href="{% static "chat/css/main.css" %}" />
+{#        <link rel="stylesheet" href="{% static "chat/css/style.css"%}" media="screen" type="text/css" />#}
+        <!--[if gte IE 9]>
+        <script src="{% static 'index/js/jquery-1.11.1.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'index/js/html5shiv.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'index/js/respond.min.js' %}" type="text/javascript"></script>
+        <script src="{% static 'index/js/selectivizr-min.js' %}" type="text/javascript"></script>
+        <![endif]-->
+        <!--[if lt IE 9]>
+        <script>window.location.href='upgrade-browser.html';</script>
+        <![endif]-->
+    </head>
+    <body class="user-select">
+        <header class="header">
+            <nav class="navbar navbar-default" id="navbar">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-navbar" aria-expanded="false"> <span class="sr-only"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+                        <h1 class="logo hvr-bounce-in"><a href="#" title="会能社区"><img src="{% static 'index/images/201610171329086541.png' %}" alt="会能社区"></a></h1>
+                    </div>
+                    <div class="collapse navbar-collapse" id="header-navbar">
+	                    <ul class="nav navbar-nav navbar-right">
+	                        <li><a data-cont="会能社区" title="会能社区" href="index.html">首页</a></li>
+	                        <li><a data-cont="列表页" title="列表页" href="list.html">列表页</a></li>
+	                        <li><a data-cont="详细页" title="详细页" href="show.html">详细页</a></li>
+{#	                        <li><a data-cont="404" title="404" href="404.html">404</a></li>#}
+	                        <li><a data-cont="更换主题" title="更换主题" href="#" >更换主题</a></li>
+	                        <li><a data-cont="公益活动" title="公益活动" href="#" >公益活动</a></li>
+	                        <li><a data-cont="休闲" title="休闲" href="#" >休闲</a></li>
+	                        <li><a data-cont="娱乐" title="娱乐" href="#" >娱乐</a></li>
+	                        <li><a data-cont="工作" title="工作" href="#" >工作</a></li>
+	                    </ul>
+                        <ul class="nav navbar-nav navbar-right" style="float: right;">
+                            {% if request.user.is_authenticated %}
+	                        <li><a href="{% url 'user:info' %}" >欢迎您：<em>{{ request.user.username }}</em></a></li>
+                            <li><a href="{% url "account_logout" %}">退出</a></li>
+                            {% else %}
+		                    <li><a href="{% url "account_login" %}">登录</a></li>
+                            <li><a href="{% url "account_signup" %}">注册</a></li>
+                        {% endif %}
+	                    </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    <section class="container" >
+    {# 轮播图 #}
+        <div class="pb-carouselWarp demo1"> {# 修改轮播图大小 #}
+			<ul class="pb-carousel">
+				<li class="pb-this"><img src="{% static 'index_image/img/1.jpg' %}" alt="" /></li>
+				<li><img src="{% static 'index_image/img/2.jpg' %}" alt=""/></li>
+				<li><img src="{% static 'index_image/img/3.jpg' %}" alt=""/></li>
+				<li><img src="{% static 'index_image/img/4.jpg' %}" alt=""/></li>
+				<li><img src="{% static 'index_image/img/5.jpg' %}" alt=""/></li>
+			</ul>
+			<ul class="pb-carousel-ind">
+				<li class="pb-this"></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<button class="pb-arrow pb-arrow-prev"></button>
+			<button class="pb-arrow pb-arrow-next" id="aa"></button>
+	    </div>
+	    <script src="{% static 'index_image/js/carousel.min.js' %}" type="text/javascript" charset="utf-8"></script>
+	    <script type="text/javascript">
+	    	carousel(
+	    		$('.demo1'),	//必选， 要轮播模块(id/class/tagname均可)，必须为jQuery元素
+	    		{
+	    			type: 'leftright',	//可选，默认左右(leftright) - 'leftright' / 'updown' / 'fade' (左右/上下/渐隐渐现)
+	    			arrowtype: 'move',	//可选，默认一直显示 - 'move' / 'none'	(鼠标移上显示 / 不显示 )
+	    			autoplay: true,	//可选，默认true - true / false (开启轮播/关闭轮播)
+	    			time:3000	//可选，默认3000
+	    		}
+	    	);
+	    </script>
+
+        <div class="content-wrap">
+            <div class="content">
+                <article class="excerpt-minic excerpt-minic-index">
+	    	        <h2>
+                        <span class="red">【介绍】</span><a target="_blank" href="#" title="用DTcms做一个独立博客网站（响应式模板）" >会能智慧社区</a>
+	    	        </h2>
+	    	        <p class="note">
+                        该网站是一个针对需求的平台，当用户有需求自己无法解决、或者不想自己花时间解决时，将需求精准的描述然后发布到平台。再了解需求后，有能力的解决的
+                        用户接取订单，然后与发布者沟通后帮助解决问题。
+                        网站针对所有有需求的用户。在学习中，遇到自己无法解决的困难，可以请教同学、家长、朋友、老师等，在当这些也无法解决自己的问题时，就可以使用我们的网站实时的发布解决相应的问题如：专业方面的知识和问题。在生活中，遇到问题，在专业的帮助不能及时解决我们的需求时、或者资金不足够时、或者担心受骗时，我们就可以用到该平台如：快递、外卖、水电维修等。
+                    </p>
+	            </article>
+                <div class="title">
+                    <h3>最新发布</h3>
+                    <div class="more">
+                        <a href="#" title="MZ-校园生活" >校园生活</a>
+                        <a href="#" title="游戏交友" >游戏交友</a>
+                        <a href="#" title="专业学习" >专业学习</a>
+                        <a href="#" title="兼职外快" >兼职外快</a>
+                        <a href="#" title="其他" >其他</a>
+                    </div>
+                 </div>
+                <article class="excerpt excerpt-1" style="">
+                    <a class="focus" href="#" title="用DTcms做一个独立博客网站（响应式模板）" target="_blank" ><img class="thumb" data-original="images/201610181739277776.jpg" src="{% static 'index/images/201610181739277776.png' %}" alt="用DTcms做一个独立博客网站（响应式模板）"  style="display: inline;"></a>
+                    <header>
+                        <a class="cat" href="#" title="MZ-NetBlog主题" >任务标题<i></i></a>
+                        <h2>
+                            <a href="#" title="用DTcms做一个独立博客网站（响应式模板）" target="_blank" >用DTcms做一个独立博客网站（响应式模板）</a>
+                        </h2>
+                    </header>
+                    <p class="meta">
+                        <time class="time"><i class="glyphicon glyphicon-time"></i> 2016-10-14</time>
+                        <span class="views"><i class="glyphicon glyphicon-eye-open"></i> 216</span> <a class="comment" href="##comment" title="评论" target="_blank" ><i class="glyphicon glyphicon-comment"></i> 4</a>
+                    </p>
+                    <p class="note">
+                        用DTcms做一个独立博客网站（响应式模板），采用DTcms V4.0正式版（MSSQL）。开发环境：SQL2008R2+VS2010。DTcms V4.0正式版功能修复和优化：1、favicon.ico图标后台上传。（解决要换图标时要连FTP或者开服务器的麻烦）
+                    </p>
+	            </article>
+                {% for line in index_list %}
+                <article class="excerpt excerpt-1"  href="{% url "index:show"  line.id%}" >
+                    <a class="focus" href="{% url "index:show" line.id%}" title="任务详情" target="_blank" ><img class="thumb" data-original="{{ MEDIA_URL }}{{ line.image }}" src="{{ MEDIA_URL }}{{ line.image }}" alt="用DTcms做一个独立博客网站（响应式模板）"  style="display: inline;"></a>
+	                <header>
+                        <a class="cat" title="MZ-NetBlog主题" >任务标题<i></i></a>/
+	                    <h2>
+                            <a href="{% url "index:show" line.id%}" title="任务详情" target="_blank" >{{ line.title }}</a>
+                        </h2>
+	                </header>
+	                <p class="meta">
+	                    <time class="time">
+                            <i class="glyphicon glyphicon-time"></i> {{ line.to_time }}</time>
+	                    <span class="views">
+                            <i class="glyphicon glyphicon-eye-open"></i> {{ line.price }}元</span> <a class="comment" href="##comment" title="评论" target="_blank" ><i class="glyphicon glyphicon-comment"></i> 4</a>
+                    </p>
+	                <a  href="{% url "index:show" line.id%}" >
+                        <p class="note">{{ line.describe|striptags }}</p>
+                    </a>
+                </article>
+                {% endfor %}
+                <nav class="pagination" style="display: none;">
+                    <ul>
+                        <li class="prev-page"></li>
+                        <li class="active"><span>1</span></li>
+                        <li><a href="?page=2">2</a></li>
+                        <li class="next-page"><a href="?page=2">下一页</a></li>
+                        <li><span>共 2 页</span></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+{#  侧边栏  #}
+        <aside class="sidebar">
+            <div class="fixed">
+                <div class="widget widget_search">
+                    <form class="navbar-form" action="{% url "haystack_search" %}" method="get">
+                        <div class="input-group">
+                            {% csrf_token %}
+                            <input type="text" name="q" class="form-control" size="35" placeholder="请输入关键字" maxlength="15" autocomplete="off">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default btn-search" name="search" type="submit">搜索</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+                <div class="widget widget_hot">
+                    <h3>最热任务</h3>
+                    <ul>
+                        <li>
+                            <a title="用DTcms做一个独立博客网站（响应式模板）" href="#" >
+                                <span class="thumbnail">
+                                    <img class="thumb" data-original="images/201610181739277776.jpg" src="{% static 'index/images/201610181739277776.png' %}" alt="用DTcms做一个独立博客网站（响应式模板）"  style="display: block;">
+                                </span>
+                                <span class="text">
+                                    用DTcms做一个独立博客网站（响应式模板）
+                                </span>
+                                <span class="muted">
+                                    <i class="glyphicon glyphicon-time"></i>2016-11-01
+                                </span>
+                                <span class="muted">
+                                    <i class="glyphicon glyphicon-eye-open"></i>88
+                                </span>
+                            </a>
+                        </li>
+                        {% for line in index_list %}
+                        <li>
+                            <a title="用DTcms做一个独立博客网站（响应式模板）" href="{% url "index:show" line.id%}" >
+                                <span class="thumbnail">
+                                    <img width="220" height="150"  class="thumb" data-original="images/201610181739277776.jpg" src="{{ MEDIA_URL }}{{ line.image }}" alt="用DTcms做一个独立博客网站（响应式模板）"  style="display: block;">
+                                </span>
+                                <span class="text">{{ line.title }}
+                                </span>
+                                <span class="muted">
+                                    <i class="glyphicon glyphicon-time"></i>{{ line.to_time }}
+                                </span>
+                                <span class="muted"><i class="glyphicon glyphicon-eye-open"></i>88</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="widget widget_sentence">
+                    <a href="#" target="_blank" rel="nofollow" title="专业网站建设" >
+                        <img style="width: 100%" src="{% static 'index/images/201610241224221511.jpg' %}" alt="专业网站建设" >
+                    </a>
+                </div>
+                <div class="widget widget_sentence">
+                    <a href="#" target="_blank" rel="nofollow" title="MZ-NetBlog主题" >
+                        <img style="width: 100%" src="{% static 'index/images/ad.jpg' %}" alt="MZ-NetBlog主题" >
+                    </a>
+                </div>
+                <div class="widget widget_sentence">
+                    <h3>友情链接</h3>
+                    <div class="widget-sentence-link">
+                        <a href="#" title="网站建设" target="_blank" >网站建设</a>&nbsp;&nbsp;&nbsp;
+                    </div>
+                </div>
+        </aside>
+    </section>
+    {#聊天窗口#}
+    <div class="md-modal md-effect-2 box" id="modal-2" style="display: none">
+        <div class="wechat">
+            <!--聊天列表-->
+            <div class="middle on">
+                <div class="wx_search">
+                    <label>
+                        <input type="text" placeholder="搜索" />
+                    </label>
+                    <button>+</button>
+                </div>
+                <div class="office_text">
+                    <ul class="user_list">
+                        <li class="user_active">
+                            <div class="user_head"><img src="{% static "chat/images/head/15.jpg" %}"  alt="图片"/></div>
+                            <div class="user_text">
+                                <p class="user_name">早安无恙</p>
+                                <p class="user_message">我是傻逼！，金少凯牛逼！</p>
+                            </div>
+                            <div class="user_time">下午 2：54</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+                <!--聊天窗口-->
+            <div class="talk_window">
+                <div class="windows_top">
+                    <div class="windows_top_box">
+                        <span>早安无恙</span>
+                        <ul class="window_icon">
+                            <li><a href=""><img src="{% static "chat/images/icon/icon7.png" %}"  alt="图片"/></a></li>
+                            <li><a href=""><img src="{% static "chat/images/icon/icon8.png" %}"   alt="图片"/></a></li>
+                            <li><a href=""><img src="{% static "chat/images/icon/icon9.png" %}"   alt="图片"/></a></li>
+                            <li><a href=""><img src="{% static "chat/images/icon/icon10.png" %}"   alt="图片"/></a></li>
+                        </ul>
+                        <div class="extend" class="am-btn am-btn-success" data-am-offcanvas="{target: '#doc-oc-demo3'}"></div>
+                        <!-- 侧边栏内容 -->
+                        <div id="doc-oc-demo3" class="am-offcanvas">
+                            <div class="am-offcanvas-bar am-offcanvas-bar-flip">
+                                <div class="am-offcanvas-content">
+                                    <p><a href="http://music.163.com/#/song?id=385554" target="_blank">网易音乐</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--聊天内容-->
+                <div class="windows_body">
+                    <div class="office_text" style="height: 100%;">
+                        <ul class="content1" id="chatbox">
+                            <li class="me"><img src="{% static "chat/images/own_head.jpg" %}" title="金少凯" alt="图片"><span>疾风知劲草，板荡识诚臣</span></li>
+                            <li class="other"><img src="{% static "chat/images/head/15.jpg" %}" title="张文超" alt="图片"><span>勇夫安知义，智者必怀仁</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="windows_input" id="talkbox">
+                    <div class="input_icon">
+                        <a href=""></a>
+                        <a href=""></a>
+                        <a href=""></a>
+                        <a href=""></a>
+                        <a href=""></a>
+                        <a href=""></a>
+                    </div>
+                    <div class="input_box">
+                        <label for="input_box"></label><textarea name="" rows="" cols="" id="input_box"></textarea>
+                        <button id="send">发送（S）</button>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript" src="{% static "chat/js/jquery.min.js" %}"></script>
+            <script type="text/javascript" src="{% static "chat/js/amazeui.min.js" %}"></script>
+            <script type="text/javascript" src="{% static "chat/js/zUI.js" %}"></script>
+            <script type="text/javascript" src="{% static "chat/js/wechat.js" %}"></script>
+
+            <script type="text/javascript">
+            //三图标
+                window.onload = function () {
+                    function b() {
+                        {% if request.user.is_authenticated %}
+                        let text = document.getElementById('input_box');
+                        let chat = document.getElementById('chatbox');
+                        let btn = document.getElementById('send');
+                        let talk = document.getElementById('talkbox');
+                        //创建WebSocket对象获得连接
+                        let websocket = new WebSocket("ws://" + "127.0.0.1:8000" +  "/ws/chat/1/");
+                        websocket.onopen = function () {
+                            console.log('WebSocket open');
+                        };
+                        //接受服务端消息
+                        websocket.onmessage = function (e) {
+                            console.log(e.data);//浏览器控制台打印返回的数据
+                            {#var jsondata = eval('(' + responseData.data + ')'); //将返回的数据转换为json对象#}
+                            {#$('#messagecontainer').prepend('<p>' + jsondata.name + '</p>'); //展示数据#}
+                            let data = JSON.parse(e.data);
+                            let text = data['text'];
+                            if (data['user'] === "{{ request.user.username }}") {
+                                chat.innerHTML += '<li class="me"><img src="' + '{{ MEDIA_URL }}{{ request.user.avatar }}' + '"><span>' + text + '</span></li>';
+                            } else {
+                                chat.innerHTML += '<li class="other"><img src="' + '{{ MEDIA_URL }}'+ data['avatar'] + '"><span>' + text + '</span></li>';
+                            }
+
+                        };
+                        btn.onclick = function () {
+                            if (text.value === '') {
+                                alert('不能发送空消息');
+                            } else {
+                                {#chat.innerHTML += '<li class="me"><img src="' + 'images/own_head.jpg' + '"><span>' + text.value + '</span></li>';#}
+                                websocket.send(JSON.stringify({"text":text.value,"user":"{{ request.user.username }}"}));//发送json数据类型
+                                text.value = '';
+                                chat.scrollTop = chat.scrollHeight;
+                                talk.style.background = "#fff";
+                                text.style.background = "#fff";
+                            }
+                        };
+                        {% else %}
+                        alert('请先登录');
+                        {% endif %}
+                    }
+                    {#a();#}
+                    b();
+                };
+            </script>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>Copyright &copy; 2016.Company name All rights reserved.More Templates <a href="http://www.cssmoban.com/" target="_blank" title="模板之家">模板之家</a> - Collect from <a href="http://www.cssmoban.com/" title="网页模板" target="_blank">网页模板</a></p>
+        </div>
+        <div id="chatbtn"><a class="chatroom md-trigger" data-modal="modal-2" title="对话"></a></div>
+        <div id="tianjia"><a class="tianjia" href="{% url 'index:index_form' %}" title="点击上传"></a></div>
+        <div id="gotop"><a class="gotop" title="回到顶部"></a></div>
+    </footer>
+    <script src="{% static 'index/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'index/js/jquery.ias.js' %}"></script>
+    <script src="{% static 'index/js/scripts.js' %}"></script>
+{##}
+{#        <script>#}
+{#			// this is important for IEs#}
+{#			var polyfilter_scriptpath = '/js/';#}
+{#		</script>#}
+{##}
+{#        <script src="{% static 'chat/js/tanchuang.js' %}"></script>#}
+    <script>
+        var num = 0;
+        $("#chatbtn").click(function(){
+            $("#modal-2").toggle(500,function(){
+                if (num===0){
+                    $("section").css({opacity:"0.4"});
+                    num = 1;
+                } else {
+                    $("section").css({opacity:"1"});
+                    num = 0;
+                }
+            });
+        });
+    </script>
+    </body>
+</html>

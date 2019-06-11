@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>提交任务</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'index_form/css/demo.css' %}">
+    <script src="{% static 'index_form/js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'index_form/js/validate-1.14.0.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'index_form/js/demo.js' %}"></script>
+    <link rel="shortcut icon" href="{% static 'index/images/favicon.ico' %}">
+
+{#导航栏#}
+<link rel="stylesheet" type="text/css" href="{% static 'index/css/style.css' %}">
+
+
+{#富文本编辑器#}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+
+ <script>
+{#点击图片上传函数#}
+function fileSelect() {
+document.getElementById("fileToUpload").click();
+}
+// common variables 封面图片上传配置
+
+var iBytesUploaded = 0;
+var iBytesTotal = 0;
+var iPreviousBytesLoaded = 0;
+var iMaxFilesize = 1048576; // 1MB
+var oTimer = 0;
+var sResultFileSize = '';
+
+function fileSelected(a, b) {
+    var oFile = document.getElementById(b).files[0];
+    // filter for image files
+    var rFilter = /^(image\/bmp|image\/gif|image\/jpeg|image\/png|image\/tiff)$/i;
+    if (!rFilter.test(oFile.type)) {
+        document.getElementById('error').style.display = 'block';
+        return;
+    }
+    // get preview element
+    var oImage = document.getElementById(a);
+    console.log(a);
+    // prepare HTML5 FileReader
+    var oReader = new FileReader();
+    oReader.onload = function(e) {
+
+        oImage.src = e.target.result;
+    };
+
+    // read selected file as DataURL
+    oReader.readAsDataURL(oFile);
+}
+</script>
+
+</head>
+<body>
+
+<nav class="navbar navbar-default" id="navbar" style="margin-bottom: 0px;">
+<div class="container">
+  <div class="navbar-header">
+	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-navbar" aria-expanded="false"> <span class="sr-only"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+	<h1 class="logo hvr-bounce-in"><a href="#" title="会能社区"><img src="{% static 'index/images/201610171329086541.png' %}" alt="会能社区"></a></h1>
+  </div>
+  <div class="collapse navbar-collapse" id="header-navbar">
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a data-cont="会能社区" title="会能社区" href="{% url 'index:index' %}">首页</a></li>
+	  <li><a data-cont="列表页" title="列表页" href="list.html">列表页</a></li>
+	  <li><a data-cont="详细页" title="详细页" href="show.html">详细页</a></li>
+{#	  <li><a data-cont="404" title="404" href="404.html">404</a></li>#}
+	  <li><a data-cont="更换主题" title="更换主题" href="#" >更换主题</a></li>
+	  <li><a data-cont="公益活动" title="公益活动" href="#" >公益活动</a></li>
+	  <li><a data-cont="休闲" title="休闲" href="#" >休闲</a></li>
+	  <li><a data-cont="娱乐" title="娱乐" href="#" >娱乐</a></li>
+	  <li><a data-cont="工作" title="工作" href="#" >工作</a></li>
+	</ul>
+      <ul class="nav navbar-nav navbar-right" style="float: right;">
+        {% if request.user.is_authenticated %}
+	    <li><a href="{% url 'user:info' %}" >欢迎您：<em>{{ request.user.username }}</em></a></li>
+        <li><a href="{% url "account_logout" %}">退出</a></li>
+        {% else %}
+		<li><a href="{% url "account_login" %}">登录</a></li>
+        <li><a href="{% url "account_signup" %}">注册</a></li>
+        {% endif %}
+	</ul>
+  </div>
+</div>
+</nav>
+
+{#<form id="demo" autocomplete="off">#}
+<form id="demo" autocomplete="off" method="post" enctype="multipart/form-data" style="margin-top: 0px;padding-top: 0px;">
+    {% csrf_token %}
+    <p>
+        <span class="tip">标题：</span>
+        <label>
+            <input type="text" name="title"  placeholder="" >
+
+        </label>
+    </p>
+{#    <p class="prompot"><i class="iconfont"></i></p>#}
+    <p>
+        <span class="tip">内容：</span>
+        <p>
+        <label class="tip1">
+                {{ myform.describe}}
+            {# 下面这个class是关键           #}
+{#            <textarea class="ckeditor" name="describe" id="TextArea1" title="按 ALT+0 获得帮助" >描述您要发布的信息内容</textarea>#}
+        </label>
+        </p>
+    </p>
+    <p class="prompot"><i class="iconfont"></i></p>
+    <p >
+        <span class="tip">封面 图片：</span>
+        <label class="">
+            <img height="230" onchange="fileSelect();" title="点击更换" id="preview" src="{% static 'index_image/img/5.jpg' %}" border="0" alt="封面显示图片"  style="margin-top: -6px;">
+            <input class="prompot" name="image"  id="image_file" onchange="fileSelected('preview','image_file');" type="file" style="left:-9999px;position:absolute;">
+        </label>
+
+{#    <div id="drop_area"></div>#}
+	</p>
+{#    <p class="prompot"><i class="iconfont"></i></p>#}
+
+    <p>
+        <span class="tip">酬金：</span>
+		<input class="number" name="price"  type="number" min="0" max="1000000000" step="0.01" placeholder="输入发布的金额">
+	</p>
+{#    <p class="prompot"><i class="iconfont"></i></p>#}
+
+    <p>
+        <span class="tip">日期：</span>
+        <input class="date" name="to_time" type="datetime-local">
+    </p>
+
+{#    <p class="prompot"><i class="iconfont"></i></p>#}
+    <p>
+        <span class="tip">类型：</span>
+        <input type="radio" name="sex" vlaue="1"><span class="radioSpan">线上</span>
+        <input type="radio" name="sex" vlaue="2"><span class="radioSpan">线下</span>
+    </p>
+    <p class="prompot"><i class="iconfont"></i></p>
+{#    <p>#}{# 多选 #}
+{#        <span class="tip">爱好：</span>#}
+{#        <input type="checkbox" name="favorite" value="1"><span class="checkboxSpan">唱歌</span>#}
+{#        <input type="checkbox" name="favorite" value="2"><span class="checkboxSpan">跳舞</span>#}
+{#        <input type="checkbox" name="favorite" value="3"><span class="checkboxSpan">游泳</span>#}
+{#        <input type="checkbox" name="favorite" value="4"><span class="checkboxSpan">画画</span>#}
+{#    </p>#}
+{#    <p class="prompot"><i class="iconfont"></i></p>#}
+    <button style="margin-left: 440px;">确认</button>
+</form>
+</body>
+</html>
